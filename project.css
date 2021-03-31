@@ -231,3 +231,7 @@ nav {
 .dropdown-item {
   cursor: pointer;
 }
+.dropright > .dropdown-menu {
+  left: 100%; 
+  top: 0%;
+}

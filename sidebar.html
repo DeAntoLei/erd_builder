@@ -18,9 +18,9 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script src="js/bootnavbar.js"></script>
+    <!-- <script src="js/bootnavbar.js"></script> -->
 
-    <link rel="stylesheet" href="css/bootnavbar.css">
+    <!-- <link rel="stylesheet" href="css/bootnavbar.css"> -->
     <link rel="stylesheet" href="project.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
@@ -47,16 +47,16 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item disabled" id="nav_save" onclick="saveJSON(false)">Save</a>
                         <a class="dropdown-item" data-toggle="modal" data-target="#downloadModal">Save as</a>
-                        <a class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle ml-3" href="#" id="exportAsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="dropdown-submenu dropright">
+                            <a class="dropdown-item dropdown-toggle" href="#">
                                 Export as
                             </a>
-                            <div style="left: 100%; top: 64%;" class="dropdown-menu dropright" aria-labelledby="exportAsDropdown">
+                            <div class="dropdown-menu">
                                 <a class="dropdown-item" onclick="downloadToPdf()">PDF</a>
                                 <a class="dropdown-item" onclick="saveJSON(false)">JSON</a>
                                 <a class="dropdown-item" id="navSaveButtonImage">IMAGE</a>
                             </div>
-                        </a>
+                        </div>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" onclick="relationalSchema()">Relational Schema</a>
                         <div class="dropdown-divider"></div>
