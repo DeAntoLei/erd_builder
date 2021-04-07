@@ -60,7 +60,7 @@ body {
 #stencil-canvas-area3 {
   padding: 0%;
 }
-#btn {
+#entities_btn, #attributes_btn, #rels_btn {
   border: 1px solid black;
   width: 100%;
   text-align: left;

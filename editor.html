@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Editor</title>
 
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
@@ -19,13 +18,13 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 
-    <link rel="stylesheet" href="project.css">
+    <link rel="stylesheet" href="../css/project.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 </head>
 
 <body>
-    <div class = "container-fluid" id = "stencil-container">
+    <div class = "container-fluid" id="stencil-container">
         <div class="row">
             <nav class="navbar navbar-expand-lg navbar-light bg-light px-4">
                 <a class="navbar-brand" href="#">ERD Builder</a>
@@ -36,10 +35,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <a class="nav-link dropdown-toggle" href="#" id="fileNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         File
                       </a>
-                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <div class="dropdown-menu" aria-labelledby="fileNavDrpdwn">
                         <a class="dropdown-item" onclick="newPage()">New</a>
                         <label class="dropdown-item" for="inputfile">Open</label>
                         <div class="dropdown-divider"></div>
@@ -62,10 +61,10 @@
                       </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="editNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Edit
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="editNavDrpdwn">
                           <a class="dropdown-item disabled" id="nav_undo" onclick="undo()">Undo</a>
                           <a class="dropdown-item disabled" id="nav_redo" onclick="redo()">Redo</a>
                           <div class="dropdown-divider"></div>
@@ -81,10 +80,10 @@
                         </div>
                       </li>
                       <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="viewNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           View
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="viewNavDrpdwn">
                           <a class="dropdown-item" onclick="setGrid(false)">Grid</a>
                           <div class="dropdown-divider"></div>
                           <a class="dropdown-item" onclick="clearFunction()">Reset</a>
@@ -93,17 +92,17 @@
                         </div>
                       </li>
                       <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="helpNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Help
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-menu" aria-labelledby="helpNavDrpdwn">
                             <!-- <div id = "search-container">
                                 <input type="text" id = "search-bar" placeholder="Search.." name="search">
                                 <label for="search-bar" class="fa fa-search input-icon"></label>
                             </div>           
                             <div class="dropdown-divider"></div> -->
-                            <a class="dropdown-item" href="erInfo.html">ER Information</a>
-                            <a class="dropdown-item" href="aboutUs.html">About us</a>
+                            <a class="dropdown-item" href="../html/erInfo.html">ER Information</a>
+                            <a class="dropdown-item" href="../html/aboutUs.html">About us</a>
                         </div>
                       </li>
                   </ul>
@@ -112,7 +111,7 @@
                   <label for="inputfile"><i class="fa fa-cloud-upload" aria-hidden="true"></i><span class="ml-1" id="filename">Choose file</span></label>
                   <i class="fa fa-times ml-1" id="x_btn" onclick="closeLoadedFile()" aria-hidden="true"></i>
                 </div>
-              </nav>
+            </nav>
         </div>
 
         <div class= "row" id = "my-row">
@@ -121,15 +120,14 @@
                     <h2 style ="font-family: Lucida Handwriting">ER-Elements</h2>
                 </div>
                 <button
-                    id="btn"
+                    id="entities_btn"
                     class="btn btn-default" 
                     type="button" 
                     data-toggle="collapse" 
                     data-target="#stencil-canvas" 
                     aria-expanded="true" 
                     aria-controls="stencil-canvas" 
-                    onclick="changeArrowPosition(this)"
-                    >
+                    onclick="changeArrowPosition(this)">
                     Entities
                     <i class="fa fa-chevron-down"></i>
                 </button>
@@ -141,15 +139,14 @@
                 </div> 
 
                 <button
-                    id = "btn"
+                    id="attributes_btn"
                     class="btn btn-default" 
                     type="button" 
                     data-toggle="collapse"
                     data-target="#stencil-canvas2" 
                     aria-expanded="true" 
                     aria-controls="stencil-canvas2" 
-                    onclick="changeArrowPosition(this)"
-                    >
+                    onclick="changeArrowPosition(this)">
                     Attributes
                     <i class="fa fa-chevron-down"></i>
                 </button>
@@ -161,15 +158,14 @@
                 </div> 
 
                 <button
-                    id = "btn"
+                    id="rels_btn"
                     class="btn btn-default" 
                     type="button" 
                     data-toggle="collapse" 
                     data-target="#stencil-canvas3" 
                     aria-expanded="false" 
                     aria-controls="stencil-canvas3" 
-                    onclick="changeArrowPosition(this)"
-                    >
+                    onclick="changeArrowPosition(this)">
                     Relationships-ISA
                     <i class="fa fa-chevron-down"></i>
                 </button>
@@ -180,8 +176,7 @@
                     </div>
                 </div> 
             </div>
-           
-            
+
             <div class="col-sm-9" id="main-canvas">
                 <div id="up-menu" width="30%">
                     <img src="https://img.icons8.com/wired/64/000000/zoom-in.png" title="Zoom in" width="3.5%" height="3.5%" onclick="zoomInFunction()">
@@ -227,6 +222,7 @@
                     </ul>
                 </div>
             </div>
+
             <div id="help" class="col-sm-2">
                 <div id="helpbox">
                     <h3 id="helpbox-title" style ="font-family: Lucida Handwriting">
@@ -281,23 +277,22 @@
             </div>
         </div>
     </div> 
-    
-    <!-- Modal -->
+
     <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-body">
-                Choose a name for your file:
-                <div class="form-group">
-                    <label><b>File Name:</b></label>
-                    <input type="text" id="inputDownloadName" placeholder="file_name">
+                <div class="modal-body">Choose a name for your file:
+                    <div class="form-group">
+                        <label><b>File Name:</b></label>
+                        <input type="text" id="inputDownloadName" placeholder="file_name">
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveButtonJSON" data-dismiss="modal">Save as JSON</button>
-                <button type="button" class="btn btn-primary" id="saveButtonImage" data-dismiss="modal">Save as IMAGE</button>
-                <button type="button" class="btn btn-primary" id="saveButtonPDF" data-dismiss="modal" onclick="downloadToPdf()">Save as PDF</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveButtonJSON" data-dismiss="modal">Save as JSON</button>
+                    <button type="button" class="btn btn-primary" id="saveButtonImage" data-dismiss="modal">Save as IMAGE</button>
+                    <button type="button" class="btn btn-primary" id="saveButtonPDF" data-dismiss="modal" onclick="downloadToPdf()">Save as PDF</button>
+                </div>
             </div>
         </div>
     </div>
@@ -305,26 +300,25 @@
     <div class="modal fade" id="query_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-body" id="query_modal_text" style="text-align: center;">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="yesButton" data-dismiss="modal">Yes</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <div class="modal-body" id="query_modal_text" style="text-align: center;"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="yesButton" data-dismiss="modal">Yes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script type="text/javascript" src="relational_schema.js"></script>
-    <script type="text/javascript" src="navbar_utils.js"></script>
-    <script type="text/javascript" src="utils.js"></script>
-    <script type="text/javascript" src="custom_elements.js"></script>
-    <script type="text/javascript" src="storage_handling.js"></script>
-    <script type="text/javascript" src="tools.js"></script>
-    <script type="text/javascript" src="paper.js"></script>
-    <script type="text/javascript" src="context_menu.js"></script>
-    <script type="text/javascript" src="stencil.js"></script>
-    <script type="text/javascript" src="helpbox.js"></script>
+    <script type="text/javascript" src="../js/relational_schema.js"></script>
+    <script type="text/javascript" src="../js/navbar_utils.js"></script>
+    <script type="text/javascript" src="../js/utils.js"></script>
+    <script type="text/javascript" src="../js/custom_elements.js"></script>
+    <script type="text/javascript" src="../js/storage_handling.js"></script>
+    <script type="text/javascript" src="../js/tools.js"></script>
+    <script type="text/javascript" src="../js/paper.js"></script>
+    <script type="text/javascript" src="../js/context_menu.js"></script>
+    <script type="text/javascript" src="../js/stencil.js"></script>
+    <script type="text/javascript" src="../js/helpbox.js"></script>
     
-    </div>
 </body>
 </html>
