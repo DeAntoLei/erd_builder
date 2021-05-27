@@ -1,0 +1,104 @@
+<!-- height of paper canvas - it now includes the navbar as well -> DONE -->
+<!-- resizing doesnt work as it should, paper canvas doesnt resize -> DONE -->
+<!-- overflow-y is visible -> DONE -->
+<!-- icons in lightblue -> DONE -->
+<!-- when disabling grid, movement of elements is not smooth but still as if there is a grid enabled -> DONE -->
+<!-- select all from nav not working -> DONE NOT WORKING -->
+<!-- paste doesnt place the element where it should -> DONE NOT WORKING PERFECTLY -->
+<!-- alerts are showing one above the other -> DONE -->
+<!-- finish home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Erd-Builder | Home</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/erd_builder_favicon.png"/>
+
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+  <!-- Bootstrap JS CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="d-flex flex-column" style="min-height: 100vh;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">  
+      <a class="navbar-brand" href="">
+        <img alt="Erd Builder" src="../assets/erd_builder_logo_copy.png" width="111" height="37">
+      </a>
+      <button class="btn-purple d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa fa-align-justify"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="main-editor.html">Editor</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./about-us.html">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="er-info.html">Er Info</a>
+          </li>
+        </ul>
+      </div>  
+    </nav>
+
+    <div class="text-center" style="background: url('../assets/erd_builder_background_copy.png') no-repeat; height: 500px; margin-top: 4rem;">
+      <div class="h-100" style="background-color: rgba(0, 0, 0, 0.4);">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <div class="text-white">
+            <h1 class="mb-3">Erd Builder is here!</h1>
+            <h4 class="mb-3">Try our editor and create your diagram in the fastest, easiest possible way!
+              <br>Don't waste more time! Click the button below!
+            </h4>
+            <a class="btn btn-outline-light btn-lg" href="main-editor.html" role="button">Check Editor</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <main role="main" class="container-fluid mt-2 d-flex flex-row justify-content-center">
+      <div class="card m-4" style="width: 38rem; border-color: #7386D5;">
+        <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+        <div class="card-body">
+          <h5 class="card-title purple-filter">Get basic ER info</h5>
+          <p class="card-text purple-filter"> Er diagramms can be kind of tricky..
+            <br>Find out everything about the basics and Er shapes now!
+          </p>
+          <a class="btn-purple" href="er-info.html" role="button"><i class="fa fa-info-circle mr-2"></i>Get Info</a>
+        </div>
+      </div>
+
+      <div class="card m-4" style="width: 38rem; border-color: #7386D5;">
+        <!-- <img class="card-img-top" src="..." alt="Card image cap"> -->
+        <div class="card-body">
+          <h5 class="card-title purple-filter">Contact info</h5>
+          <p class="card-text purple-filter">Want to meet the crazy UoM students that built this website?
+            <br> Want to give us your feedback?
+          </p>
+          <a class="btn-purple" href="./about-us.html" role="button"><i class="fa fa-envelope mr-2"></i>Contact Us</a>
+        </div>
+      </div>
+    </main>
+
+    <div class="navbar navbar-inverse mt-auto">
+      <div class="container-fluid ml-2">
+        <p class="navbar-text p-0"><small>© Copyright 2020/2021 - Erd Builder - UoM thesis project</small></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

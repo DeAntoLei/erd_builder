@@ -1,0 +1,422 @@
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+}
+
+a,
+a:hover,
+a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.navbar {
+    padding: 8px 8px;
+    /* border-bottom: 1px solid #d3d3e7; */
+    box-shadow: 1px 3px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.dropright > .dropdown-menu {
+    left: 100%; 
+    top: 0%;
+}
+
+/* ---------------------------------------------------
+    SIDEBAR STYLES
+----------------------------------------------------- */
+
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+#sidebar {
+    width: 18rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 999;
+    background: #7386D5;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -18rem;
+}
+
+#sidebar .stencil-header {
+    padding: 15px;
+    margin-bottom: 1.5rem;
+    background: #6d7fcc;
+}
+
+#sidebar .stencil-header h3 {
+    margin-bottom: 0;
+}
+
+#sidebar .stencil-shapes p {
+    color: #fff;
+    font-weight: 200;
+    padding: 0px 20px;
+    margin-bottom: 0px;
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #6d7fcc;
+}
+
+/* ---------------------------------------------------
+    CONTENT STYLES
+----------------------------------------------------- */
+
+#content {
+    width: calc(100% - 18rem);
+    height: 100vh;
+    transition: all 0.3s;
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+#content.active {
+    width: 100%;
+}
+
+#info-sidebar {
+    width: 15rem;
+    top: 10%;
+    bottom: 10%;
+    right: 0;
+    position: fixed;
+    z-index: 999;
+    background: #7386D5;
+    color: #fff;
+    border-radius: 0.25rem;
+    overflow: auto;
+    transition: all 0.3s;
+}
+
+#info-sidebar.inactive {
+    margin-right: -15rem;   
+}
+
+.info-sidebar-header {
+    background-color: #6d7fcc;
+}
+
+/* ---------------------------------------------------
+    MEDIAQUERIES
+----------------------------------------------------- */
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -18rem;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #info-sidebar {
+        margin-right: -15rem;
+    }
+    #unfo-sidebar.inactive {
+        margin-right: 0;
+    }
+    #content {
+        width: 100%;
+    }
+    #content.active {
+        width: calc(100% - 18rem);
+    }
+}
+
+/* ---------------------------------------------------
+    TYPE INPUT STYLES
+----------------------------------------------------- */
+
+[type="file"] {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    white-space: nowrap;
+    width: 1px;
+}
+
+[type="file"] + label {
+    background-color: transparent;
+    border: 0.5px solid #7386D5;
+    border-radius: 0.25rem;
+    color: #7386D5;
+    cursor: pointer;
+    padding: 7px 8px 6px;
+    margin: 0;
+}
+
+#dismiss-btn {
+    background-color: transparent;
+    border: 0.5px solid #7386D5;
+    border-radius: 0.25rem;
+    color: #7386D5;
+    cursor: pointer;
+    padding: 2.5px 4px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+/* ---------------------------------------------------
+    PURPLE BUTTON STYLES
+----------------------------------------------------- */
+
+.btn-purple {
+    background-color: transparent;
+    border: 0.5px solid #7386D5;
+    border-radius: 0.25rem;
+    color: #7386D5;
+    cursor: pointer;
+    padding: .375rem .75rem;
+}
+
+.btn-purple:focus {
+    outline: none;
+}
+
+[type="file"] + label:hover, 
+#dismiss-btn:hover,
+.btn-purple:hover {
+    background-color: #7386D5;
+    color: #fff;
+}
+
+/* ---------------------------------------------------
+    STENCIL STYLES
+----------------------------------------------------- */
+
+#stencil-canvas-ent-shapes {
+    height: 10%;
+}
+
+#stencil-canvas-attr-shapes {
+    height: 20%;
+}
+
+#stencil-canvas-rel-shapes {
+    height: 31%;
+}
+
+#stencil-canvas-ent-shapes, #stencil-canvas-attr-shapes, #stencil-canvas-rel-shapes {
+    background: #6d7fcc;
+}
+
+/* ---------------------------------------------------
+    MAIN VIEWPORT STYLES
+----------------------------------------------------- */
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.grid_disabled {
+    opacity: 0.5;
+}
+
+img {
+    cursor: pointer;
+}
+
+.joint-marker-vertex {
+    cursor: pointer;
+}
+  
+.joint-element {
+    cursor: pointer;
+}
+  
+.element-tools {
+    display: none;
+    cursor: pointer;
+}
+  
+.joint-element:hover .element-tools {
+    display: inline;
+}
+
+#canvas-tools {
+    background-color: #fff;
+}
+
+#main-viewport, #main-canvas {
+    flex: 1;
+}
+
+#main-canvas {
+    /* If there is a sidebar with wisth: 50px */
+    /* width: calc(100% - 50px); */
+    width: 50px;
+}
+
+/* ---------------------------------------------------
+    CONTEXT MENU STYLES
+----------------------------------------------------- */
+
+.ctx-menu {
+    width: 180px;
+    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    display: none;
+    background-color: #FFFFFF;
+}
+
+.ctx-menu .menu-options {
+    list-style: none;
+    padding: 5px 0;
+    margin: 0;
+}
+
+.ctx-menu .menu-options .menu-option {
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 40px 10px 20px;
+    cursor: pointer;
+}
+
+.ctx-menu .menu-options .menu-option:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ---------------------------------------------------
+    COLOUR FILTERING STYLES
+----------------------------------------------------- */
+
+.purple-filter { 
+    /* filter: invert(57%) sepia(21%) saturate(1303%) hue-rotate(192deg) brightness(100%) contrast(80%);  */
+    filter: invert(58%) sepia(51%) saturate(2401%) hue-rotate(202deg) brightness(85%) contrast(85%);
+}
+
+/* ---------------------------------------------------
+    ALERTS STYLES
+----------------------------------------------------- */
+
+.alert-container {
+    position: fixed;
+    /* padding: .75rem 1.25rem; */
+    top: 2%;
+    right: 1%;
+    width: 25%;
+    border-radius: .25rem;
+    animation: alert 2s ease forwards;
+}
+
+@keyframes alert { 0% { opacity: 0; } 50% { opacity: 1; } 100% { top: 2%; } }
+
+/* ---------------------------------------------------
+    MAIN CONTENT STYLES
+----------------------------------------------------- */
+
+main {
+    margin-top: 5rem;
+}
+
+.section {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title {
+    background-color: #7386D5;
+    color: #fff;
+    /* margin-right: 10rem; */
+    border-radius: 0.25rem;
+}
+
+.section-content {
+    color: #7386D5;
+    border: 0.5px solid #7386D5;
+    border-radius: 0.25rem;
+}
+
+.vl {
+    border-left: 1px solid #7386D5;
+}
+
+/* ---------------------------------------------------
+    RANGE STYLES
+----------------------------------------------------- */
+
+.slider-pic {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: opacity .15s ease-in-out;
+    transition: opacity .15s ease-in-out;
+}
+
+.slider-pic:hover {
+    opacity:1;
+}
+
+.slider-pic::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.slider-pic::-moz-range-thumb {
+    width: 23px;
+    height: 24px;
+    border: 0;
+    border-radius: 50%;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------
+    INPUT STYLES
+----------------------------------------------------- */
+
+.input-purple, select {
+    border: 0.5px solid #fff;
+    border-radius: 0.25rem;
+    background: transparent;
+    color: #fff;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+option {
+    background-color: #7386D5;
+    color: #fff;
+}
+
+option:focus {
+    background-color: #fff;
+    color: #7386D5;
+}

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>Erd Builder | Editor</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/erd_builder_favicon.png"/>
+
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  
+  <!-- Html 2 Canvas library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-alpha1/html2canvas.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js'></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <!-- Export as pdf library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+  <!-- Bootstrap JS CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <!-- JointJs Diagramming Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+      <div class="stencil-header">
+        <h3>Shapes</h3>
+      </div>
+
+      <div class="stencil-shapes h-100 mt-3">
+        <p>Entities</p>
+        <div class="mb-3" id="stencil-canvas-ent-shapes"></div>
+        
+        <p>Attributes</p>
+        <div class="mb-3" id="stencil-canvas-attr-shapes"></div>
+        
+        <p>Relationships</p>
+        <div id="stencil-canvas-rel-shapes"></div>
+      </div>
+    </nav>
+
+    <!-- Page Content  -->
+    <div class="d-flex flex-column" id="content">
+      <div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" id="editor-navbar">
+          
+            <button class="btn-purple" type="button" id="sidebarCollapse" onclick="toggleSidebar()">
+              <i class="fa fa-align-left"></i>
+            </button>
+            <a class="navbar-brand" href="home.html">
+              <img alt="Erd Builder" src="../assets/erd_builder_logo_copy.png" width="111" height="37">
+            </a>
+            <button class="btn-purple d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <i class="fa fa-align-justify"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item dropdown mr-1">
+                  <a class="nav-link dropdown-toggle" href="#" id="fileNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    File
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="fileNavDrpdwn">
+                    <a class="dropdown-item" onclick="newPage()">New</a>
+                    <label class="dropdown-item" for="file-upload">Open</label>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item disabled" id="nav_save" onclick="saveJSON(false)">Save</a>
+                    <a class="dropdown-item" data-toggle="modal" data-target="#downloadModal">Save as</a>
+                    <div class="dropdown-submenu dropright">
+                        <a class="dropdown-item dropdown-toggle" href="#">
+                            Export as
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" onclick="downloadToPdf()">PDF</a>
+                            <a class="dropdown-item" onclick="saveJSON(false)">JSON</a>
+                            <a class="dropdown-item" id="navSaveButtonImage" onclick="saveImage()">IMAGE</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="relationalSchema()">Relational Schema</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item disabled" id="nav_close" onclick="closeLoadedFile()">Close</a>
+                  </div>
+                </li>
+
+                <li class="nav-item dropdown mr-1">
+                  <a class="nav-link dropdown-toggle" href="#" id="editNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Edit
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="editNavDrpdwn">
+                    <a class="dropdown-item disabled" id="nav_undo" onclick="undo()">Undo</a>
+                    <a class="dropdown-item disabled" id="nav_redo" onclick="redo()">Redo</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item disabled" id="nav_cut" onclick="cut(false)">Cut</a>
+                    <a class="dropdown-item disabled" id="nav_copy" onclick="copy(false)">Copy</a>
+                    <a class="dropdown-item disabled" id="nav_paste" onclick="paste(false)">Paste</a>
+                    <a class="dropdown-item disabled" id="nav_del" onclick="removeSelected()">Delete</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item disabled" id="nav_dpl" onclick="duplicate(false)">Duplicate</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="nav_select_all" onclick="selectAll()">Select All</a> 
+                  </div>
+                </li>
+
+                <li class="nav-item dropdown mr-1">
+                  <a class="nav-link dropdown-toggle" href="#" id="viewNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    View
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="viewNavDrpdwn">
+                    <a class="dropdown-item" onclick="setGrid(false)">Grid</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" onclick="clearFunction()">Reset</a>
+                    <a class="dropdown-item" onclick="zoomInFunction()">Zoom In</a>
+                    <a class="dropdown-item" onclick="zoomOutFunction()">Zoom out</a>
+                  </div>
+                </li>
+                
+                <li class="nav-item dropdown mr-2">
+                  <a class="nav-link dropdown-toggle" href="#" id="helpNavDrpdwn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Help
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="helpNavDrpdwn">
+                    <a class="dropdown-item" href="er-info.html">ER Information</a>
+                    <a class="dropdown-item" href="./about-us.html">About us</a>
+                  </div>
+                </li>
+                
+                <li class="nav-item file-upload-container d-inline-flex">
+                  <input type="file" name="file-input" id="file-upload" accept="application/JSON"/>
+                  <label for="file-upload"><i class="fa fa-cloud-upload" aria-hidden="true"></i><span class="ml-1" id="filename">Choose file</span></label>
+                  <i class="fa fa-times ml-1" id="dismiss-btn" onclick="closeLoadedFile()" aria-hidden="true"></i>
+                </li>
+              </ul>
+            </div>  
+          <!-- </div> -->
+        </nav>
+
+        <div class="text-left py-2 pl-2" id="canvas-tools">
+          <img src="https://img.icons8.com/wired/64/000000/zoom-in.png" class="purple-filter" title="Zoom in" width="1.5%" height="1.5%" onclick="zoomInFunction()"/>
+          <img src="https://img.icons8.com/wired/64/000000/zoom-out.png" class="purple-filter" title="Zoom out" width="1.5%" height="1.5%" onclick="zoomOutFunction()"/>
+          <img src="https://img.icons8.com/wired/64/000000/trash.png" class="purple-filter" title="Delete all/selected" width="2%" height="2%" onclick="clearFunction()"/>
+          <img src="https://img.icons8.com/metro/26/000000/activity-grid-2.png" class="purple-filter" id="btn_grid" title="Enable grid" width="1.7%" height="1.7%" onclick="setGrid(false)"/>
+          
+          <img src="https://img.icons8.com/carbon-copy/100/000000/save.png" class="disabled purple-filter" id="btn_save" title="Save" width="2.5%" height="2.5%" onclick="saveJSON(false)"/>
+          <img src="https://img.icons8.com/carbon-copy/100/000000/save-as.png" class="purple-filter" title="Save as" width="2.5%" height="2.5%" data-toggle="modal" data-target="#downloadModal"/>
+          <img src="https://img.icons8.com/ios-filled/64/000000/back-sorting.png" class="purple-filter" title="To Back" width="2%" height="2%" onclick="moveToBack()"/>
+          <img src="https://img.icons8.com/ios-filled/64/000000/front-sorting.png" class="purple-filter" title="To Front" width="2%" height="2%" onclick="moveToFront()"/>
+          
+          <img src="https://img.icons8.com/metro/26/000000/undo.png" class="disabled purple-filter" id="btn_undo" title="Undo" width="2%" height="2%" onclick="undo()"/>
+          <img src="https://img.icons8.com/metro/50/000000/redo.png" class="disabled purple-filter" id="btn_redo" title="Redo" width="2%" height="2%" onclick="redo()"/>
+          <img src="https://img.icons8.com/ios/50/000000/one-to-many.png" class="purple-filter" title="Download relational schema" width="2%" height="2%" onclick="relationalSchema()"/>
+        </div>
+      </div>
+
+      <div class="d-flex flex-row" id="main-viewport">
+        <div id="main-canvas">
+          <div id="paper-canvas"></div>
+
+          <div class="ctx-menu" id="ctx-gen-menu">
+            <ul class="menu-options">
+              <li id="ctx_paste" class="menu-option disabled" onclick="paste(true)">Paste</li>
+              <li id="ctx_undo" class="menu-option disabled" onclick="undo()">Undo</li>
+              <li id="ctx_redo" class="menu-option disabled" onclick="redo()">Redo</li>
+              <li id="ctx_save" class="menu-option disabled" onclick="saveJSON(false)">Save</li>
+              <li class="menu-option" data-toggle="modal" data-target="#downloadModal">Save As</li>
+            </ul>
+          </div>
+          <div class="ctx-menu" id="ctx-el-menu">
+            <ul class="menu-options">
+              <li id="ctx_del" class="menu-option" onclick="deleteElement()">Delete</li>
+              <li class="menu-option" onclick="cut(true)">Cut</li>
+              <li class="menu-option" onclick="copy(true)">Copy</li>
+              <li id="ctx_dpl" class="menu-option" onclick="duplicate(true)">Duplicate</li>
+              <li id="ctx_to_front" class="menu-option" onclick="moveToFront()">To Front</li>
+              <li id="ctx_to_back" class="menu-option" onclick="moveToBack()">To Back</li>
+              <li id="ctx_break" class="menu-option" onclick="breakConnections()">Break all connections</li>
+            </ul>
+          </div>
+
+          <div class="inactive" id="info-sidebar">
+            <div class="d-flex flex-row justify-content-between info-sidebar-header p-2 mb-2">
+              <h3>Cell Info</h3>
+              <button type="button" class="close" onclick="dismiss('help')">&times;</button>
+            </div>
+            <div class="p-2 mb-2" id="element-helpbox-content">
+              <div><span class="mb-2">Name:</span>
+                <input class="input-purple" id="input-el-name" type="text" oninput="updateName(this.value)" onchange="addState()" placeholder="element_name">
+              </div>
+              <div id="complex-key-separator"><small>* Complex key? Separate by ;</small></div>
+              <hr>
+              <div><span class="mb-2">Font Size:</span>
+                <input class="input-purple" type="number" id="fontSize" maxlength="2" size="2" oninput="updateFontSize(this.value)" onchange="addState()">
+              </div>
+              <br><span class="mb-2">Change style of letters:</span>
+              <select id="fontFamily" data-selected="" onchange="updateFontFamily(this.value)">
+                <option value="Arial" selected="selected">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Times">Times</option>
+                <option value="serif">serif</option>
+                <option value="comic">comic</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="sans-serif">sans-serif</option>
+                <option value="Lucida Console">Lucida Console</option>
+                <option value="Courier New">Courier New</option>
+                <option value="monospace">monospace</option>
+              </select>
+              <hr>
+              <span class="mr-2">Width:</span>
+              <input class="mb-2 input-purple" id="input-el-width-text" type="number" oninput="updateWidth(this)" onfocusout="addState()" min="20" max="300" placeholder="element_width">
+              
+              <input class="slider-pic input-purple" id="input-el-width-range" type="range" oninput="updateWidth(this)" onchange="addState()" min="20" max="300" step="1">
+              <hr>
+              <span class="mr-2">Height:</span>
+              <input class="mb-2 input-purple" id="input-el-height-text" type="number" oninput="updateHeight(this)" onfocusout="addState()" min="20" max="300" placeholder="element_height">
+              
+              <input class="slider-pic input-purple" id="input-el-height-range" type="range" oninput="updateHeight(this)" onchange="addState()" min="20" max="300" step="1">
+              <hr>
+              <div class="form-check" id="isWeakKeyDiv">
+                <input type="checkbox" onchange="isWeakKey()" class="form-check-input" id="isWeakKey">
+                <label class="form-check-label" for="isWeakKey">Weak Entity key?</label>
+              </div>
+              <div class="form-check" id="isCoveringDiv">
+                <input type="checkbox" class="form-check-input" id="isCoveringIsa" onchange="isCoveringIsa()">
+                <label class="form-check-label" for="isCoveringIsa">Is Covering ?</label>
+              </div>   
+            </div>
+
+            <div class="p-2 mb-2" id="link-helpbox-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Alerts Container -->
+  <div class="alert-container d-flex flex-column" id="alert-container"></div>
+
+  <!-- App Modals -->
+  <div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p class="my-2">Choose a name for your file and <br>a file format for your download:</br></p>
+          <input type="text" id="inputDownloadName" placeholder="file_name">
+        </div>
+        <div class="modal-footer d-inline-flex">
+          <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Close</button>
+          <button class="btn-purple" type="button" id="saveButtonJSON" data-dismiss="modal" onclick="saveJSON(true)">JSON</button>
+          <button class="btn-purple" type="button" id="saveButtonImage" data-dismiss="modal" onclick="saveImage()">PNG</button>
+          <button class="btn-purple" type="button" id="saveButtonPDF" data-dismiss="modal" onclick="downloadToPdf()">PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="query_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body mt-2" id="query_modal_text" style="text-align: center;"></div>
+        <div class="modal-footer">
+          <button class="btn-purple" type="button" id="yesButton" data-dismiss="modal">Yes</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="../js/relational_schema.js"></script>
+  <script type="text/javascript" src="../js/navbar_utils.js"></script>
+  <script type="text/javascript" src="../js/utils.js"></script>
+  <script type="text/javascript" src="../js/custom_elements.js"></script>
+  <script type="text/javascript" src="../js/storage_handling.js"></script>
+  <script type="text/javascript" src="../js/tools.js"></script>
+  <script type="text/javascript" src="../js/paper.js"></script>
+  <script type="text/javascript" src="../js/context_menu.js"></script>
+  <script type="text/javascript" src="../js/stencil.js"></script>
+  <script type="text/javascript" src="../js/helpbox.js"></script>
+
+</body>
+
+</html>

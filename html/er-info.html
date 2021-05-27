@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Erd-Builder | Er..What?</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/erd_builder_favicon.png"/>
+
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+  <!-- Bootstrap JS CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="d-flex flex-column" style="min-height: 100vh;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">  
+      <a class="navbar-brand" href="home.html">
+        <img alt="Erd Builder" src="../assets/erd_builder_logo_copy.png" width="111" height="37">
+      </a>
+      <button class="btn-purple d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa fa-align-justify"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="home.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="main-editor.html">Editor</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./about-us.html">Contact</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="">Er Info</a>
+          </li>
+        </ul>
+      </div>  
+    </nav>
+
+    <main role="main" class="container-fluid">
+      <div data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="entity">Entity</h2>
+          <p class="section-content px-2 py-1">An entity relationship diagram (ERD) shows the relationships of entity sets stored in a database. An entity in this context is an object, a component of data. An entity set is a collection of similar entities. These entities can have attributes that define its properties.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="weak-entity">Weak Entity</h2>
+          <p class="section-content px-2 py-1">A weak, or non-identifying, relationship exists if the primary key of the related entity does not contain a primary key component of the parent entity.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="normal-attribute">Normal Attribute</h2>
+          <p class="section-content px-2 py-1">Attributes are included to include details of the various entities that are highlighted in a conceptual ER diagram. Attributes are characteristics of an entity, a many-to-many relationship, or a one-to-one relationship. Multivalued attributes are those that are can take on more than one value.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="derived-attribute">Derived Attribute</h2>
+          <p class="section-content px-2 py-1">A derived attribute is one whose value is dynamic and derived from another attribute. It is represented by dashed oval in an ER Diagram. For example – Person age is a derived attribute as it changes over time and can be derived from another attribute (Date of birth).</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="multivalued-attribute">Multivalued Attribute</h2>
+          <p class="section-content px-2 py-1">An attribute that can hold multiple values is known as multivalued attribute. It is represented with double ovals in an ER Diagram. For example – A person can have more than one phone numbers so the phone number attribute is multivalued.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="key">Key Attribute</h2>
+          <p class="section-content px-2 py-1">A key is an attribute in ER diagrams whose values are distinct for each individual entity in an entity set.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="foreign-key">Foreign Key</h2>
+          <p class="section-content px-2 py-1"> Foreign key is a field in a table that uniquely identifies a row in another table or same table. In this foreign key in ER diagram example, the foreign key is marked as FK. The way of producing a foreign key is to go to the setbox by clicking a key two times, then go down to the bottom and tap the radio button.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="relationship">Relationship</h2>
+          <p class="section-content px-2 py-1">A relationship type represents the association between entity types. For example,'Enrolled in' is a relationship type that exists between entity type Student and Course. In ER diagram, relationship type is represented by a diamond and connecting the entities with lines.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="identifying-relationship">Identifying Relationship</h2>
+          <p class="section-content px-2 py-1">An identifying relationship is a relationship between two entities in which an instance of a child entity is identified through its association with a parent entity, which means the child entity is dependent on the parent entity for its identity and cannot exist without it.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="isa">Isa Hierarchy</h2>
+          <p class="section-content px-2 py-1">The ISA relationship is used to model the hierarchy which is created as the class entity is decomposed into its logical sub-components. Customers may be PREFERRED_CUSTOMERS or NEW_CUSTOMERS, and orders may be COD_ORDERS or PREPAID_ORDERS, each with their own data items and behaviors.</p>
+        </div>
+        <div class="section">
+          <h2 class="section-title pl-2 w-75" id="associative-entity">Associative Entity</h2>
+          <p class="section-content px-2 py-1">Inclusion allows us to deal with correlations as a whole entities and to be related with other sets of correlations.</p>
+        </div> 
+      </div>
+    </main>
+
+    <div class="navbar navbar-inverse mt-auto">
+      <div class="container-fluid ml-2">
+        <p class="navbar-text p-0"><small>© Copyright 2020/2021 - Erd Builder - UoM thesis project</small></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
