@@ -76,11 +76,7 @@ function createLink(elementView) {
     }
     
     // Proceed with link, but aggregation or ISA involved?
-    if (isTypeInvolved(startingElement, currentElement, 'tm.Aggregation')) {
-      $("#query_modal").prependTo("body");
-      $('#query_modal').modal({ show: true, backdrop: 'static' });
-      $("#query_modal_text").html('Add to aggregation?');
-    } else if (isTypeInvolved(startingElement, currentElement, 'tm.ISA')) {
+    if (isTypeInvolved(startingElement, currentElement, 'tm.ISA')) {
       $("#query_modal").prependTo("body");
       $('#query_modal').modal({ show: true, backdrop: 'static' });
       $("#query_modal_text").html('Superclass?');
@@ -93,18 +89,28 @@ function createLink(elementView) {
     if (finalLink.prop('labels') && ['tm.Relationship', 'tm.Identifying_Relationship', 'tm.Aggregation'].includes(startingElement.prop("type"))) {
       finalLink.label(0, { position: 0.2 });
     }
+
     // is connection with weak entity?
     if (connectionBetween(startingElement, currentElement, 'tm.Weak_Entity', 'tm.Identifying_Relationship')) {    
       finalLink.attr('line/strokeWidth', 3);
       finalLink.label(0, { attrs: { text: { fill: "orchid", text: '1' } } });
     }
+
+    // is connection with aggregation?
+    if (isTypeInvolved(startingElement, currentElement, 'tm.Aggregation') &&
+        !connectionBetween(startingElement, currentElement, 'tm.Aggregation', 'tm.Relationship') &&
+        !connectionBetween(startingElement, currentElement, 'tm.Aggregation', 'tm.Identifying_Relationship')) {
+      finalLink.attr('line/stroke', 'indigo');
+      if (isTypeInvolved(startingElement, currentElement, 'tm.Entity')) {
+        finalLink.label(0, {attrs: {text: {fill: "indigo", text: "N"}}});
+      }
+    }
     finalLink.addTo(graph);
 
     $('#yesButton').click(() => {
-      if ($('#query_modal_text').html().includes('aggregation')) { 
-        finalLink.attr('line/stroke', 'indigo');
-        finalLink.label(0, { attrs: { text: { fill: "indigo", text: "N" } } });
-      } else { finalLink.appendLabel({ position: 0.8, attrs: { text: { fill: "orchid", text: "Superclass" } } }); }
+      if ($('#query_modal_text').html().includes('Superclass?')) {
+        finalLink.appendLabel({ position: 0.8, attrs: { text: { fill: "orchid", text: "Superclass" } } });
+      }
       addState();
     })
     

@@ -45,7 +45,7 @@ function relationalSchema() {
       if (link.prop('labels') && link.prop('labels')[0].attrs.text.text === '1') {
         subGraph.forEach(sElem => {
           if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') {
-            oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text });
+            oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: (sElem.attributes.type === 'tm.Weak_Entity') ? true : false });
           } else if (sElem.attributes.type === "tm.Aggregation") {
             aggrIncluded = true;
           }
@@ -85,14 +85,23 @@ function relationalSchema() {
       
       // If there is at least one entity related once to others, no table for the relationship is created
       if (oneEntities.length) {
-        oneEntities.forEach(e => {
-          foreignKeys.forEach(fk => { fkeys.push({ id: e.id, fkeyName: fk }); });
-          potentialAttributes.forEach(pa => { attributes.push({ id: e.id, attrName: pa.attrName}); });
-        })
+        foreignKeys.forEach(fk => {
+          fkeys.push({ id: oneEntities[0].id, fkeyName: fk });
+          if (oneEntities[0].weak) { keys.push({ id: oneEntities[0].id, keyName: fk }); }
+        });
+        potentialAttributes.forEach(pa => { attributes.push({ id: oneEntities[0].id, attrName: `${rel.attributes.attrs.text.text}_${pa.attrName}`}); });
       } else { // If there is no entity related once to others, a table for the relationship is created
         tables.push({id: rel.id, tableName: rel.attributes.attrs.text.text });
-        const keyNames = keys.filter(k => relatedEntities.includes(k.id)).map(k => k.keyName);
-        keyNames.forEach(k => { keys.push({ id: rel.id, keyName: k }); });
+        const relKeys = keys.filter(k => relatedEntities.includes(k.id));
+        const keyNames = []
+        relKeys.forEach(k => {
+          const referencedTableName = tables.filter(t => t.id === k.id)[0].tableName;
+          keyNames.push(`${referencedTableName}_${k.keyName}`);
+        })
+        keyNames.forEach(k => {
+          keys.push({ id: rel.id, keyName: k });
+          fkeys.push({ id: rel.id, fkeyName: k });
+        });
         attributes = attributes.concat(potentialAttributes);
       }
     }
@@ -124,7 +133,8 @@ function relationalSchema() {
       if (s.attributes.attrs.text.text !== currentIsa.entityToInherit ) {
         keys.forEach(key => {
           if (key.id === entityToInheritTable.id) {
-            keys.push({ id: s.id, keyName: key.keyName });
+            keys.push({ id: s.id, keyName: `${currentIsa.entityToInherit}_${key.keyName}` });
+            if (!currentIsa.isCovering) { fkeys.push({ id: s.id, fkeyName: `${currentIsa.entityToInherit}_${key.keyName}` }); }
           }
         })
         fkeys.forEach(fkey => {
@@ -135,7 +145,7 @@ function relationalSchema() {
         if (currentIsa.isCovering) {
           attributes.forEach(attr => {
             if(attr.id === entityToInheritTable.id) {
-              attributes.push({ id: s.id, attrName: attr.attrName });
+              attributes.push({ id: s.id, attrName: `${currentIsa.entityToInherit}_${attr.attrName}` });
             }
           })
         }
@@ -150,10 +160,11 @@ function relationalSchema() {
     const redLinks = [], blackLinks = [];
 
     aggrLinks.forEach(link => {
-      if (link.attr("line/stroke") === "red") { redLinks.push(link); }
+      if (link.attr("line/stroke") === "indigo") { redLinks.push(link); }
       else { blackLinks.push(link); }
     });
 
+    // dealing with entities that belong to the aggregation
     let tableReprAggregation;
     let relatedEntities = [];
     let oneEntities = [];
@@ -198,21 +209,28 @@ function relationalSchema() {
     }
 
     if (oneEntities.length) {
-      oneEntities.forEach(e => {
-        foreignKeys.forEach(fk => { fkeys.push({ id: e.id, fkeyName: fk }); });
-        potentialAttributes.forEach(pa => { attributes.push({ id: e.id, attrName: pa.attrName}); });
-      })
+      foreignKeys.forEach(fk => { fkeys.push({ id: oneEntities[0].id, fkeyName: fk }); });
+      potentialAttributes.forEach(pa => { attributes.push({ id: oneEntities[0].id, attrName: `${aggr.attributes.attrs.text.text}_${pa.attrName}`}); });
 
       if (!tableReprAggregation) { tableReprAggregation = oneEntities[oneEntities.length - 1].id; }
     } else {
       tables.push({ id: aggr.id, tableName: aggr.attributes.attrs.text.text });
-      const keyNames = keys.filter(k => relatedEntities.includes(k.id)).map(k => k.keyName);
-      keyNames.forEach(k => { keys.push({ id: aggr.id, keyName: k }); });
+      const relKeys = keys.filter(k => relatedEntities.includes(k.id));
+      const keyNames = []
+      relKeys.forEach(k => {
+        const referencedTableName = tables.filter(t => t.id === k.id)[0].tableName;
+        keyNames.push(`${referencedTableName}_${k.keyName}`);
+      })
+      keyNames.forEach(k => {
+        keys.push({ id: aggr.id, keyName: k });
+        fkeys.push({ id: aggr.id, fkeyName: k });
+      });
       attributes = attributes.concat(potentialAttributes);
 
       tableReprAggregation = tables[tables.length - 1].id;
     }
 
+    // dealing with relationships that connect to an aggregation
     const relsLinkedToAggr = []
     blackLinks.forEach(link => {
       if (link.getTargetElement() === aggr && ['tm.Relationship', 'tm.Identifying_Relationship'].includes(link.getSourceElement().attributes.type)) {
@@ -231,7 +249,7 @@ function relationalSchema() {
         if (link.prop('labels') && link.prop('labels')[0].attrs.text.text === '1') {
           subGraph.forEach(sElem => {
             if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') { 
-              oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text }); 
+              oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: (sElem.attributes.type === 'tm.Weak_Entity') ? true : false });
             } else if (sElem.attributes.type === "tm.Aggregation") {
               const t = tables.find(t => t.id === tableReprAggregation);
               oneEntities.push({ id: t.id, name: t.tableName });
@@ -251,8 +269,14 @@ function relationalSchema() {
 
             if (addFKeys) {
               let newFKeys = JSON.parse(JSON.stringify(keys.filter(k => k.id === addFKeys.id)));
-              newFKeys = newFKeys.map(fk => fk.keyName = `${addFKeys.name}_${fk.keyName}`);
-              foreignKeys = foreignKeys.concat(newFKeys);
+              if (addFKeys.id === aggr.id) {
+                let aggregationKey = '';
+                newFKeys.forEach((k, index) => aggregationKey += (index === newFKeys.length - 1) ? k.keyName : `${k.keyName}, `);
+                foreignKeys = foreignKeys.concat(aggregationKey);
+              } else {
+                newFKeys = newFKeys.map(fk => fk.keyName = `${addFKeys.name}_${fk.keyName}`);
+                foreignKeys = foreignKeys.concat(newFKeys);
+              }
             }
           })
         } else {
@@ -274,14 +298,32 @@ function relationalSchema() {
       }
 
       if (oneEntities.length) {
-        oneEntities.forEach(e => {
-          foreignKeys.forEach(fk => { fkeys.push({ id: e.id, fkeyName: fk }); });
-          potentialAttributes.forEach(pa => { attributes.push({ id: e.id, attrName: pa.attrName}); });
-        })
+        foreignKeys.forEach(fk => {
+          fkeys.push({ id: oneEntities[0].id, fkeyName: fk });
+          if (oneEntities[0].weak) { keys.push({ id: oneEntities[0].id, keyName: fk }); }
+        });
+        potentialAttributes.forEach(pa => { attributes.push({
+          id: oneEntities[0].id, attrName: `${rel.attributes.attrs.text.text}_${pa.attrName}`});
+        });
       } else {
         tables.push({id: rel.id, tableName: rel.attributes.attrs.text.text });
-        const keyNames = keys.filter(k => relatedEntities.includes(k.id)).map(k => k.keyName);
-        keyNames.forEach(k => { keys.push({ id: rel.id, keyName: k }); });
+
+        const relKeys = keys.filter(k => relatedEntities.includes(k.id));
+        const keyNames = [];
+        let aggregationKey = '';
+        relKeys.forEach(k => {
+          const referencedTable = tables.filter(t => t.id === k.id)[0];
+          if (referencedTable.id !== aggr.id) { keyNames.push(`${referencedTable.tableName}_${k.keyName}`) }
+          else { aggregationKey += `${k.keyName}, ` ; }
+          // (aggr.id !== k.id) ? keyNames.push(`${referencedTableName}_${k.keyName}`) : keyNames.push(k.keyName);
+        })
+        aggregationKey = aggregationKey.slice(0, -2)
+        keyNames.push(aggregationKey)
+
+        keyNames.forEach(k => {
+          keys.push({ id: rel.id, keyName: k });
+          fkeys.push({ id: rel.id, fkeyName: k });
+        });
         attributes = attributes.concat(potentialAttributes);
       }
     });
@@ -297,21 +339,30 @@ function relationalSchema() {
         keyString = keyString + (`${key.keyName}, `)
       }
     })
-    fileString = fileString + ((keyString) ? 'KEYS: ' + keyString : '');
+    fileString = fileString + keyString;
 
     attributes.forEach(atrribute => {
       if (table.id === atrribute.id) {
         attrString = attrString + (`${atrribute.attrName}, `);
       }
     })
-    fileString = fileString + ((attrString) ? 'ATTRIBUTES: ' + attrString : '');
-    
-    fkeys.forEach(fkey => {
-      if (table.id === fkey.id) {
-        fkeyString = fkeyString + (`${fkey.fkeyName}, `);
+    fileString = fileString + attrString;
+
+    keyString = 'PK('
+    keys.forEach(key => {
+      if (table.id === key.id) {
+        keyString = keyString + (`${key.keyName}, `)
       }
     })
-    fileString = fileString + ((fkeyString) ? 'FOREIGN KEYS: ' + fkeyString : '');
+    keyString = keyString.slice(0, -2)
+    fileString = fileString + keyString + '), ';
+
+    fkeys.forEach(fkey => {
+      if (table.id === fkey.id) {
+        fkeyString = fkeyString + (`FK(${fkey.fkeyName}), `);
+      }
+    })
+    fileString = fileString + fkeyString;
 
     fileString = (keyString || attrString || fkeyString) ? fileString.slice(0, -2) : fileString.slice(0, -1);
     fileString = fileString + ((keyString || attrString || fkeyString) ? ')' : '');
