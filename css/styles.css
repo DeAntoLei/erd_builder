@@ -103,7 +103,7 @@ ul ul a {
 #info-sidebar {
     width: 15rem;
     top: 10%;
-    bottom: 10%;
+    bottom: 1%;
     right: 0;
     position: fixed;
     z-index: 999;
@@ -120,6 +120,11 @@ ul ul a {
 
 .info-sidebar-header {
     background-color: #6d7fcc;
+}
+
+#close-btn:focus,#close-btn:active {
+    outline: none !important;
+    box-shadow: none;
 }
 
 /* ---------------------------------------------------
@@ -409,6 +414,7 @@ main {
     color: #fff;
     padding-left: 2px;
     padding-right: 2px;
+    width: 100%;
 }
 
 option {
