@@ -8,15 +8,16 @@ function relationalSchema() {
 
   const elements = graph.getElements();
   const elems = separateByType(elements);
+
   elems.entities.forEach(ent => {
-    const textVal = ent.attributes.attrs.text.text;  
+    const textVal = ent.attributes.attrs.text.text;
     tables.push({ id: ent.id, tableName: textVal });
 
     const neighbours = graph.getNeighbors(ent);
     let keyExists = false
     neighbours.forEach(n => {
       // Extract entity's key/s
-      if (n.attributes.type === "tm.Key") {  
+      if (n.attributes.type === "tm.Key") {
         keys.push({ id: ent.id, keyName: n.attributes.attrs.text.text });
         keyExists = true;
       } else if (['tm.Normal', 'tm.Multivalued', 'tm.Derived'].includes(n.attributes.type)) { // Extract entity's attributes
@@ -32,7 +33,6 @@ function relationalSchema() {
 
   elems.relationships.forEach(rel => {
     let aggrIncluded = false;
-
     const relLinks = graph.getConnectedLinks(rel);
 
     const relatedEntities = [];
@@ -45,7 +45,7 @@ function relationalSchema() {
       if (link.prop('labels') && link.prop('labels')[0].attrs.text.text === '1') {
         subGraph.forEach(sElem => {
           if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') {
-            oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: (sElem.attributes.type === 'tm.Weak_Entity') ? true : false });
+            oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: sElem.attributes.type === 'tm.Weak_Entity' });
           } else if (sElem.attributes.type === "tm.Aggregation") {
             aggrIncluded = true;
           }
@@ -63,7 +63,7 @@ function relationalSchema() {
           }
         })
       } else { // Extract relationship's potential attributes
-        subGraph.forEach((sElement) => {   
+        subGraph.forEach((sElement) => {
           if (['tm.Normal', 'tm.Multivalued', 'tm.Derived'].includes(sElement.attributes.type)) {
             potentialAttributes.push({ id: rel.id, attrName: sElement.attributes.attrs.text.text });
           }
@@ -73,7 +73,7 @@ function relationalSchema() {
 
     // Relationships connected to aggregations are dealt with later on
     if (!aggrIncluded) {
-      // If there are one to one connections, add all the entities keys to the first one 
+      // If there are one to one connections, add all the entities keys to the first one
       if (oneEntities.length >= 2) {
         for (let i = 1; i < oneEntities.length; i++) {
           const oneToOneFkeyNames = keys.filter(k => oneEntities[i].id === k.id).map(k => k.keyName);
@@ -82,10 +82,11 @@ function relationalSchema() {
           })
         }
       }
-      
+
       // If there is at least one entity related once to others, no table for the relationship is created
       if (oneEntities.length) {
         foreignKeys.forEach(fk => {
+          attributes.push({ id: oneEntities[0].id, attrName: fk });
           fkeys.push({ id: oneEntities[0].id, fkeyName: fk });
           if (oneEntities[0].weak) { keys.push({ id: oneEntities[0].id, keyName: fk }); }
         });
@@ -114,19 +115,20 @@ function relationalSchema() {
     // Search for a superclass entity
     graph.getConnectedLinks(isa).forEach(link => {
       if (link.prop('labels') && link.prop('labels')[0].attrs.text.text === 'Superclass') {
-        currentIsa.entityToInherit = (link.getTargetElement() === isa) ? link.getSourceElement().attributes.attrs.text.text : 
+        currentIsa.entityToInherit = (link.getTargetElement() === isa) ? link.getSourceElement().attributes.attrs.text.text :
           link.getTargetElement().attributes.attrs.text.text;
       }
     });
-    // if the user doesnt provide a superclass, show alert
+
+    // if the user does not provide a superclass, show alert
     if(!currentIsa.entityToInherit){
       showAlert('danger', `danger-no-super-${isa.id}`, `ISA element with the name of  ${isa.attributes.attrs.text.text.toUpperCase().bold()} has no superclass`);
-      superclassExists = false;  
+      superclassExists = false;
     }
     if (!superclassExists) { return; }
 
     const entityToInheritTable = tables.find(t => t.tableName === currentIsa.entityToInherit);
-    
+
     const neighbours = graph.getNeighbors(isa);
     neighbours.forEach(s => {
       // Add superclass'es keys, fkeys and attributes, if needed, to subclass entities
@@ -182,14 +184,14 @@ function relationalSchema() {
         subGraph.forEach(sElem => {
           if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') {
             relatedEntities.push(sElem.id);
-  
+
             let newFKeys = JSON.parse(JSON.stringify(keys.filter(k => k.id === sElem.id)));
             newFKeys = newFKeys.map(fk => fk.keyName = `${sElem.attributes.attrs.text.text}_${fk.keyName}`);
             foreignKeys = foreignKeys.concat(newFKeys);
           }
         })
       } else {
-        subGraph.forEach((sElement) => {   
+        subGraph.forEach((sElement) => {
           if (['tm.Normal', 'tm.Multivalued', 'tm.Derived'].includes(sElement.attributes.type)) {
             potentialAttributes.push({ id: aggr.id, attrName: sElement.attributes.attrs.text.text });
           }
@@ -209,7 +211,10 @@ function relationalSchema() {
     }
 
     if (oneEntities.length) {
-      foreignKeys.forEach(fk => { fkeys.push({ id: oneEntities[0].id, fkeyName: fk }); });
+      foreignKeys.forEach(fk => {
+        attributes.push({ id: oneEntities[0].id, attrName: fk });
+        fkeys.push({ id: oneEntities[0].id, fkeyName: fk });
+      });
       potentialAttributes.forEach(pa => { attributes.push({ id: oneEntities[0].id, attrName: `${aggr.attributes.attrs.text.text}_${pa.attrName}`}); });
 
       if (!tableReprAggregation) { tableReprAggregation = oneEntities[oneEntities.length - 1].id; }
@@ -248,8 +253,8 @@ function relationalSchema() {
         const subGraph = graph.getSubgraph([link]);
         if (link.prop('labels') && link.prop('labels')[0].attrs.text.text === '1') {
           subGraph.forEach(sElem => {
-            if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') { 
-              oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: (sElem.attributes.type === 'tm.Weak_Entity') ? true : false });
+            if (sElem.attributes.type === "tm.Entity" || sElem.attributes.type === 'tm.Weak_Entity') {
+              oneEntities.push({ id: sElem.id, name: sElem.attributes.attrs.text.text, weak: sElem.attributes.type === 'tm.Weak_Entity' });
             } else if (sElem.attributes.type === "tm.Aggregation") {
               const t = tables.find(t => t.id === tableReprAggregation);
               oneEntities.push({ id: t.id, name: t.tableName });
@@ -280,9 +285,12 @@ function relationalSchema() {
             }
           })
         } else {
-          subGraph.forEach((sElement) => {   
+          subGraph.forEach((sElement) => {
             if (['tm.Normal', 'tm.Multivalued', 'tm.Derived'].includes(sElement.attributes.type)) {
-              potentialAttributes.push({ id: rel.id, attrName: sElement.attributes.attrs.text.text });
+              const attrIndex = attributes.findIndex(pa => pa.id === rel.id);
+              if (attrIndex === -1) {
+                potentialAttributes.push({ id: rel.id, attrName: sElement.attributes.attrs.text.text });
+              }
             }
           });
         }
@@ -299,6 +307,7 @@ function relationalSchema() {
 
       if (oneEntities.length) {
         foreignKeys.forEach(fk => {
+          attributes.push({ id: oneEntities[0].id, attrName: fk });
           fkeys.push({ id: oneEntities[0].id, fkeyName: fk });
           if (oneEntities[0].weak) { keys.push({ id: oneEntities[0].id, keyName: fk }); }
         });
@@ -306,7 +315,10 @@ function relationalSchema() {
           id: oneEntities[0].id, attrName: `${rel.attributes.attrs.text.text}_${pa.attrName}`});
         });
       } else {
-        tables.push({id: rel.id, tableName: rel.attributes.attrs.text.text });
+        const relTableIndex = tables.findIndex(t => t.id === rel.id);
+        if (relTableIndex === -1) {
+          tables.push({id: rel.id, tableName: rel.attributes.attrs.text.text });
+        }
 
         const relKeys = keys.filter(k => relatedEntities.includes(k.id));
         const keyNames = [];
@@ -333,7 +345,7 @@ function relationalSchema() {
   tables.forEach(table => {
     fileString = fileString + (`${table.tableName}(`);
     let keyString = '', attrString = '', fkeyString = '';
-    
+
     keys.forEach(key => {
       if (table.id === key.id) {
         keyString = keyString + (`${key.keyName}, `)
@@ -403,7 +415,7 @@ function separateByType(elements) {
       case "tm.ISA":
         elems.isas.push(e);
         break;
-      case "tm.Aggregation": 
+      case "tm.Aggregation":
         elems.aggregations.push(e);
         break;
     }
